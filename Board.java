@@ -14,9 +14,6 @@ public class Board {
 
     String[] tiles;
 
-    
-
-
     // <------Example main method code------->
 
     
