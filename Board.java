@@ -18,6 +18,12 @@ import java.util.*;
  * 
  * This is beneficial for games where data needs to be stored on the board,
  * but cannot be shown to the player yet
+ * 
+ * The board has an invisible border that is not able to be accessed by the player.
+ * This is so that the getters and setters do not need many checks to work properly.
+ * Ex. The tile North and West of A1 do not exist without the border, so getTileNorth("A1"), and getTileWest("A1")
+ *      will throw an IndexOutOfBoundsException.
+ * The border does not affect the alphanumeric coordinates, but shifts the index values by 1
  */
 
 public class Board {
@@ -62,6 +68,7 @@ public class Board {
         this.dimension = dimension;
         this.initialValue = initialValue;
         this.hiddenValue = hiddenValue;
+        //creates the matrix 2 larger to account for the border tiles
         board = new String[dimension + 2][dimension + 2];
         for(int i = 0; i < dimension + 2; i++){
             for(int j = 0; j < dimension + 2; j++){
