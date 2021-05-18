@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 /**
  * Command line Minesweeper game
  * @author JT Janssen
@@ -10,7 +12,7 @@ public class Minesweeper {
 
     // Variables for colored terminal printouts
     // Can only be used with supported terminals - Visual Studio Code, iTerm2, PowerShell, etc.
-    // Can be removed if buggy
+    // Can be removed if print statements buggy
     static final String ANSI_RESET = "\u001B[0m";
     static final String ANSI_BLACK = "\u001B[30m";
     static final String ANSI_RED = "\u001B[31m";
@@ -33,28 +35,62 @@ public class Minesweeper {
     static final String TILE_8 = "8";
     static final String TILE_0 = " ";
 
+    // Enum for game states
+    static enum states {start, guess, end}
+
+    static Scanner keys = new Scanner(System.in);
+
+    static Minesweeper minesweeper;
+
+
+
 
     /**
      * Runs Minesweeper
      * @param args Not used
      */
     public static void main(String[] args) {
-        Minesweeper minesweeper = new Minesweeper(10, 10);
-        clearScreen();
-        printTitle();
-        minesweeper.board.printBoard();
+        states gameState = states.start;
+        boolean gameActive = true;
 
-        //runs uncoverTile() until it outputs false //TODO change this to a state machine & case for winning
-        while(minesweeper.uncoverTile()){
-            clearScreen();
-            printTitle();
-            minesweeper.board.printBoard();
+        while(gameActive){
+            switch(gameState){
+                case start:{
+                    minesweeper = new Minesweeper(10, 10);
+                    gameActive = true;
+                    clearScreen();
+                    printTitle();
+                    minesweeper.board.printBoard();
+                    gameState = states.guess;
+
+                } case guess:{
+                    if(minesweeper.uncoverTile()){
+                        clearScreen();
+                        printTitle();
+                        minesweeper.board.printBoard();
+                    } else {
+                        gameState = states.end;
+                    }
+                    break;
+                } case end:{
+                    System.out.println(ANSI_RED + "Game over." + ANSI_RESET);
+                    System.out.print("Play again? Y/N: ");
+                    String playAgain = keys.next(); 
+                    if(playAgain.equals("y") || playAgain.equals("Y")){
+                        gameState = states.start;
+                    } else if(playAgain.equals("n") || playAgain.equals("N")){
+                        gameActive = false;
+                        keys.close();
+                        break;
+                    }                     
+                    break;
+                }
+            }
         }
-        System.out.println(ANSI_RED + "Game over." + ANSI_RESET);
     }
 
     /**
-     * Constructs a minesweeper board from Board class
+     * Constructs a Minesweeper board from Board class
      * @param dimension Side length of board (always square)
      * @param numOfBombs Number of bombs on board
      */
